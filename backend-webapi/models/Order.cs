@@ -9,7 +9,7 @@ namespace backend_webapi.models
     {
         public int Id {get; set;}
         public DateTime OrderDate {get; set;}
-        public decimal ToatalPrice {get; set;}
+        public decimal TotalPrice {get; set;}
         public ICollection<Item> Items {get; set;} = new List<Item>();
         public int UserId {get; set;}
         public User User;

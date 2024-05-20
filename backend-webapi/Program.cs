@@ -1,4 +1,5 @@
-using backend_webapi.MyDbContext;
+using backend_webapi;
+using backend_webapi.MyDb;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -13,7 +14,43 @@ builder.Services.AddDbContext<MyDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<Seed>();
+
 var app = builder.Build();
+
+if (args.Length == 1 && args[0].ToLower() == "seeddata")
+    SeedData(app);
+
+void SeedData(IHost app)
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        var service = scope.ServiceProvider.GetService<Seed>();
+
+        if (service != null)
+        {
+            service.SeedDataContext();
+        }
+        else
+        {
+            Console.WriteLine("Seed service is not registered.");
+        }
+    }
+}
+
+// if (args.Length == 1 && args[0].ToLower() == "seeddata")
+//     SeedData(app);
+
+// void SeedData(IHost app)
+// {
+//     var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
+
+//     using (var scope = scopedFactory.CreateScope())
+//     {
+//         var service = scope.ServiceProvider.GetService<Seed>();
+//         service.Initialize();
+//     }
+// }
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

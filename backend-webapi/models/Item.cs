@@ -11,7 +11,7 @@ namespace backend_webapi.models
         public int Id { get; set; }
         public required string ItemName { get; set; }
         public required string ItemDescription { get; set; }
-        public int Quantitiy { get; set; }
+        public int Quantity { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
         public Category Category;
