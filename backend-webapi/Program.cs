@@ -1,25 +1,35 @@
 using backend_webapi;
+using backend_webapi.Interface;
 using backend_webapi.MyDb;
+using backend_webapi.Repository;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
 
-builder.Services.AddDbContext<MyDbContext>(options => {
+builder.Services.AddDbContext<MyDbContext>(options =>
+{
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
 builder.Services.AddScoped<Seed>();
+
+builder.Services.AddControllers(); // Add this line to add controller services
 
 var app = builder.Build();
 
 if (args.Length == 1 && args[0].ToLower() == "seeddata")
+{
     SeedData(app);
+}
 
 void SeedData(IHost app)
 {
@@ -38,52 +48,18 @@ void SeedData(IHost app)
     }
 }
 
-// if (args.Length == 1 && args[0].ToLower() == "seeddata")
-//     SeedData(app);
-
-// void SeedData(IHost app)
-// {
-//     var scopedFactory = app.Services.GetService<IServiceScopeFactory>();
-
-//     using (var scope = scopedFactory.CreateScope())
-//     {
-//         var service = scope.ServiceProvider.GetService<Seed>();
-//         service.Initialize();
-//     }
-// }
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.RoutePrefix = string.Empty; // To serve the Swagger UI at the app's root (http://localhost:<port>/)
+    });
 }
 
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapControllers(); // Ensure this line is included to map the controllers
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
