@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
+using backend_webapi.DTO;
 using backend_webapi.Interface;
 using backend_webapi.models;
 using backend_webapi.MyDb;
@@ -14,11 +16,13 @@ namespace backend_webapi.Controller
     public class ItemController : ControllerBase
     {
         private readonly IItemRepository _itemRepository;
-        private readonly MyDbContext _context;
+        private readonly IMapper _mapper;
+        // private readonly MyDbContext _context;
 
-        public ItemController(IItemRepository itemRepository)
+        public ItemController(IItemRepository itemRepository, IMapper mapper)
         {
             _itemRepository = itemRepository;
+            _mapper = mapper;
             // _context = context;
         }
 
@@ -26,7 +30,7 @@ namespace backend_webapi.Controller
         [ProducesResponseType(200, Type = typeof (IEnumerable<Item>))]
 
         public IActionResult GetItems(){
-            var items = _itemRepository.GetItems();
+            var items = _mapper.Map<List<ItemDto>>(_itemRepository.GetItems());
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
@@ -42,7 +46,7 @@ namespace backend_webapi.Controller
             if (!_itemRepository.IsExists(id))
             return NotFound();
 
-            var item = _itemRepository.GetItem(id);
+            var item = _mapper.Map<ItemDto>(_itemRepository.GetItem(id));
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

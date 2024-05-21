@@ -155,3 +155,5 @@ C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\Microsoft.Asp
 C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
 C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\Newtonsoft.Json.dll
 C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\Newtonsoft.Json.Bson.dll
+C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\PC\Desktop\clothing-store\backend-webapi\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
